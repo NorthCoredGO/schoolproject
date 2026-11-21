@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f8eeee">
+  <meta name="description" content="Интерактивная карта деревянных домов Вологды с историями и уличными панорамами.">
+  <title>Деревянная Вологда — карта домов</title>
+  <link rel="stylesheet" href="assets/leaflet.css">
+  <link rel="stylesheet" href="styles.css">
+  <script src="assets/leaflet.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="brand"><span class="brand-symbol" aria-hidden="true">В</span><span>Деревянная Вологда</span></div>
+    <div class="header-note"><span class="header-dot"></span> Интерактивный путеводитель по городу</div>
+  </header>
+
+  <main class="content">
+    <aside class="sidebar" id="sidebar" aria-hidden="true" inert>
+      <button class="sidebar-close" id="sidebar-close" type="button" aria-label="Закрыть панель">×</button>
+      <div class="sidebar-top">
+        <p class="eyebrow"><span class="eyebrow-line"></span> Атлас деревянной архитектуры <span class="edition">01 / Вологда</span></p>
+        <h1>Город, который <em>помнит.</em></h1>
+        <p class="intro">Резные фасады, тихие улицы и истории за дверями. Исследуйте деревянную Вологду в своём темпе.</p>
+        <div class="hero-stats"><div><strong>16</strong><span>зданий</span></div><div><strong id="street-count">0</strong><span>улиц</span></div><div><strong>1</strong><span>город</span></div></div>
+        <div class="controls-caption">Найдите место</div>
+        <div class="search-wrap">
+          <label class="sr-only" for="house-search">Поиск по дому или адресу</label>
+          <svg aria-hidden="true" viewBox="0 0 24 24" width="19" height="19"><circle cx="10.8" cy="10.8" r="6.5"/><path d="m16 16 4.5 4.5"/></svg>
+          <input id="house-search" type="search" placeholder="Найти дом или улицу" autocomplete="off">
+          <kbd>/</kbd>
+        </div>
+        <div class="filter-row">
+          <label class="sr-only" for="street-filter">Фильтр по улице</label>
+          <select id="street-filter"><option value="">Все улицы</option></select>
+        </div>
+        <div class="view-tabs" role="group" aria-label="Показать дома">
+          <button id="filter-all" class="view-tab active" type="button" aria-pressed="true">Все дома</button>
+          <button id="filter-favorites" class="view-tab" type="button" aria-pressed="false">♡ Избранное <span id="favorite-count">0</span></button>
+        </div>
+      </div>
+      <div class="list-heading"><span>Исследуйте дома</span><span id="house-count">16</span></div>
+      <div class="house-list" id="house-list" aria-label="Список деревянных домов"></div>
+      <p class="empty-state" id="empty-state" hidden>Ничего не найдено. Измените запрос или фильтры.</p>
+      <div class="sidebar-footer"><p>Подборка известных деревянных зданий, а не полный реестр городской застройки. Адреса и истории — по <a href="https://turvologda.ru/museums-and-display-facilities/44/" target="_blank" rel="noopener noreferrer">турпорталу Вологды</a> и другим источникам в карточках домов.</p></div>
+    </aside>
+
+    <section class="map-region" aria-label="Карта деревянных домов Вологды">
+      <div class="map" id="map"></div>
+      <button class="details-toggle" id="details-toggle" type="button" aria-controls="sidebar" aria-expanded="false"><span class="toggle-icon" aria-hidden="true">✦</span><span>Подробнее</span><span class="toggle-arrow" aria-hidden="true">↗</span></button>
+      <div class="map-title"><span class="map-title-dot"></span><span id="map-count">16 домов на карте</span></div>
+      <div class="map-legend"><span class="legend-mark">✦</span><span>Нажмите на метку, чтобы узнать историю дома</span></div>
+      <div class="map-actions">
+        <button id="show-all" type="button">Показать все дома</button>
+        <a id="open-map" href="https://www.openstreetmap.org/#map=13/59.2235/39.8855" target="_blank" rel="noopener noreferrer">Открыть большую карту ↗</a>
+      </div>
+      <div class="map-message" id="map-message" role="status" hidden>Карта сейчас недоступна. Список домов и их истории работают; можно также открыть большую карту по ссылке ниже.</div>
+    </section>
+  </main>
+
+  <dialog class="detail-dialog" id="house-dialog" aria-labelledby="dialog-title">
+    <div class="dialog-head">
+      <div><p class="dialog-kicker">Деревянная Вологда</p><h2 class="dialog-title" id="dialog-title"></h2><p class="dialog-address" id="dialog-address"></p></div>
+      <button class="dialog-close" id="dialog-close" type="button" aria-label="Закрыть окно">×</button>
+    </div>
+    <iframe class="panorama" id="panorama" title="Уличная панорама рядом с домом"></iframe>
+    <div class="dialog-content">
+      <p id="dialog-description"></p>
+      <button id="dialog-favorite" class="dialog-favorite" type="button" aria-pressed="false">♡ Сохранить в избранное</button>
+      <div class="dialog-links"><a id="panorama-link" href="#" target="_blank" rel="noopener noreferrer">Панорама в Яндекс Картах ↗</a><a id="source-link" href="#" target="_blank" rel="noopener noreferrer">Источник информации ↗</a></div>
+      <p class="dialog-hint">Панорама показывает ближайшую доступную точку съёмки. Дом может находиться рядом или вне кадра.</p>
+    </div>
+  </dialog>
+</body>
+</html>
