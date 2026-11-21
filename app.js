@@ -20,6 +20,7 @@ const houses = [
 ];
 
 const center = [59.2235,39.8855];
+const cityZoom = 13;
 const list = document.getElementById('house-list');
 const count = document.getElementById('house-count');
 const mapMessage = document.getElementById('map-message');
@@ -194,7 +195,7 @@ document.addEventListener('keydown',event => {
 
 try {
   if (!window.L) throw new Error('Leaflet не загрузился');
-  map = L.map('map',{zoomControl:false}).setView(center,13);
+  map = L.map('map',{zoomControl:false,minZoom:cityZoom}).setView(center,cityZoom);
   L.control.zoom({position:'topleft'}).addTo(map);
   const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{
     maxZoom:19,
@@ -237,8 +238,8 @@ document.getElementById('show-all').addEventListener('click',() => {
   setFavoriteView(false);
   if (map) {
     map.stop();
-    if (reduceMotion) map.setView(center,13);
-    else map.flyTo(center,13,{duration:1.1});
+    if (reduceMotion) map.setView(center,cityZoom);
+    else map.flyTo(center,cityZoom,{duration:1.1});
   }
 });
 
