@@ -1,5 +1,70 @@
 :root{--red:#b43f50;--red-dark:#842c3d;--ink:#392b31;--muted:#806e73;--line:#ead9dd;--glass:#fffaf9db;--shadow:0 22px 70px #512b3630,0 2px 12px #512b3610}
 *{box-sizing:border-box}
+.login-screen, .locked > :is(.site-header,.content) { display:none; }
+:is(.locked,.switching-screen) .login-screen {
+  position:fixed; inset:0; z-index:1200;
+  --lace-tile:clamp(118px,13vw,190px);
+  display:grid; place-items:safe center; height:100dvh; overflow:auto; padding:20px;
+  background:radial-gradient(ellipse at center,#f7e8ea 3%,transparent 72%),
+    url("assets/login-lace.svg") center / var(--lace-tile) var(--lace-tile) repeat,
+    linear-gradient(135deg,#bc8391,#e6c6cb 54%,#bd8995);
+}
+@media (prefers-reduced-motion:no-preference) {
+  :is(.locked,.switching-screen) .login-screen { animation:lace-drift 32s linear infinite; }
+  @keyframes lace-drift {
+    from { background-position:center,center,center; }
+    to {
+      background-position:center,
+        calc(50% - var(--lace-tile) * 2) calc(50% - var(--lace-tile)),center;
+    }
+  }
+}
+.login-card {
+  display:grid; gap:18px; width:min(100%,390px); padding:clamp(22px,6vw,36px);
+  position:relative; overflow:hidden;
+  border:1px solid white; border-radius:26px; background:#fffafa; box-shadow:var(--shadow);
+}
+.login-card::before {
+  content:""; position:absolute; top:-50px; right:-42px; width:128px; height:128px;
+  background:#e3bcc5; mask:url("assets/login-lace.svg") center / contain no-repeat;
+  pointer-events:none;
+}
+.login-card > * { position:relative; }
+.login-card h1 { font-size:36px; margin:6px 0; }
+.login-card label { display:grid; gap:6px; font-size:13px; font-weight:650; }
+.login-field { display:block; position:relative; }
+.login-card input {
+  display:block; width:100%; padding:11px; border:1px solid #d6b6bd; border-radius:10px;
+  color:var(--ink); outline:2px solid transparent; outline-offset:2px;
+  transition:border-color .65s ease, outline-color .65s ease, box-shadow .65s ease;
+}
+.login-card input:focus {
+  border-color:var(--red); outline-color:var(--red-dark);
+  box-shadow:0 0 0 6px #b43f5014;
+}
+.login-field::after {
+  content:""; position:absolute; bottom:-4px; right:15px; width:62px; height:9px;
+  border-radius:6px; pointer-events:none; background:#fffafa url("assets/field-lace.svg") center / 20px 9px repeat-x;
+  opacity:0; transition:opacity .7s ease;
+}
+.login-field:focus-within::after { opacity:1; }
+.login-card button, #logout { padding:10px 16px; border:0; border-radius:11px; font-weight:700; }
+.login-card button {
+  background:var(--red-dark); color:white;
+  box-shadow:0 3px 9px #68243824;
+  transition:transform .2s ease-out,box-shadow .22s,background-color .22s;
+}
+.login-card button:is(:hover,:focus-visible) {
+  background:#923449;
+  box-shadow:inset 0 0 8px #ffffff65,0 0 0 2px white,0 0 15px 5px white,0 5px 22px 6px #a75c704d;
+}
+@media (prefers-reduced-motion:no-preference) {
+  .login-card button:is(:hover,:focus-visible) { transform:scale(1.04); }
+  .login-card button:active { transform:scale(.99); }
+}
+#logout { background:#f4dde2; color:var(--red-dark); }
+#login-error { margin:0; font-size:13px; color:var(--red-dark); }
+#login-error:empty { display:none; }
 html,body{width:100%;min-height:100%;margin:0}
 body{overflow:hidden;background:#f5ecec;color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
 button,input,select{font:inherit}button{cursor:pointer}a{color:inherit}
@@ -42,3 +107,74 @@ h1{max-width:390px;margin:0;color:#4f3039;font:500 clamp(42px,3.3vw,55px)/1.01 G
 @media(max-width:390px){.map-title{top:145px}.leaflet-control-zoom{margin-top:210px!important}.hero-stats{gap:2px}.hero-stats strong{font-size:24px}}
 @media(max-height:620px){.sidebar-top{padding-top:20px}.intro{margin:10px 0}.hero-stats{margin-bottom:13px;padding:9px 0}.list-heading{padding-top:12px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important}}
+
+.leaflet-tooltip.house-preview {
+  padding: 9px 13px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fffafa;
+  color: var(--ink);
+  box-shadow: 0 5px 18px #512b362b;
+}
+.house-preview strong, .house-preview span { display: block; }
+.house-preview strong { color: var(--red-dark); font: 600 15px Georgia, serif; }
+.house-preview span { margin-top: 3px; font-size: 11px; }
+.map-pin, .number { position: relative; }
+.map-pin::before, .number::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 58px;
+  height: 58px;
+  background: url("assets/lace-rays.svg") center / contain no-repeat;
+  pointer-events: none;
+  opacity: var(--lace-visible, 0);
+  transform: translate(-50%, -50%) scale(var(--lace-scale, .84));
+  transition: opacity .17s ease-out, transform .24s ease-out;
+}
+.house-icon:focus-visible, .house-button:focus-visible {
+  --lace-visible: 1;
+  --lace-scale: 1;
+}
+@media (hover: hover) {
+  .house-icon:hover, .number:hover {
+    --lace-visible: 1;
+    --lace-scale: 1;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .house-icon:focus-visible .house-digit,
+  .house-button:focus-visible .house-digit {
+    animation: digit-hop .36s ease-out;
+  }
+  @media (hover: hover) {
+    .house-icon:hover .house-digit,
+    .number:hover .house-digit {
+      animation: digit-hop .36s ease-out;
+    }
+  }
+  @keyframes digit-hop {
+    0%, 100% { transform: none; }
+    40% { transform: translateY(-3px) rotate(-6deg); }
+    75% { transform: translateY(1px) rotate(2deg); }
+  }
+  .map-pin.selected::after {
+    content: "";
+    position: absolute;
+    inset: -4px;
+    border: 2px solid var(--red);
+    border-radius: inherit;
+    pointer-events: none;
+    animation: pin-ring .65s ease-out both;
+  }
+  .detail-dialog[open] { animation: reveal-house .22s ease-out; }
+  @keyframes pin-ring {
+    from { transform: scale(1); opacity: .75; }
+    to { transform: scale(1.8); opacity: 0; }
+  }
+  @keyframes reveal-house {
+    from { transform: translateY(8px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+}

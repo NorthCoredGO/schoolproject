@@ -11,10 +11,21 @@
   <script src="assets/leaflet.js" defer></script>
   <script src="app.js" defer></script>
 </head>
-<body>
+<body class="locked">
+  <section class="login-screen" aria-labelledby="login-title">
+    <form class="login-card" id="login-form">
+      <div class="brand"><span class="brand-symbol" aria-hidden="true">В</span>Деревянная Вологда</div>
+      <h1 id="login-title">Вход в путеводитель</h1>
+      <label>Логин<span class="login-field"><input id="login-name" autocomplete="username" required autocapitalize="none" spellcheck="false"></span></label>
+      <label>Пароль<span class="login-field"><input id="login-password" type="password" autocomplete="current-password" required></span></label>
+      <p id="login-error" role="alert"></p>
+      <button type="submit">Войти</button>
+    </form>
+  </section>
   <header class="site-header">
     <div class="brand"><span class="brand-symbol" aria-hidden="true">В</span><span>Деревянная Вологда</span></div>
     <div class="header-note"><span class="header-dot"></span> Интерактивный путеводитель по городу</div>
+    <button type="button" id="logout">Выйти</button>
   </header>
 
   <main class="content">

@@ -141,17 +141,18 @@ function openDetails(index) {
 }
 
 function selectHouse(index) {
+  const zoomDurationMs = 900;
   if (openTimer !== null) window.clearTimeout(openTimer);
   setSelected(index);
   const house = houses[index];
   if (map) {
     map.stop();
     if (reduceMotion) map.setView(house.coords,17);
-    else map.flyTo(house.coords,17,{duration:1.15});
+    else map.flyTo(house.coords,17,{duration:zoomDurationMs / 1000});
     updateMapLink();
   }
   if (!map || reduceMotion) openDetails(index);
-  else openTimer = window.setTimeout(() => { openTimer = null; openDetails(index); },1150);
+  else openTimer = window.setTimeout(() => { openTimer = null; openDetails(index); },zoomDurationMs);
 }
 
 houses.forEach((house,index) => {
@@ -161,7 +162,7 @@ houses.forEach((house,index) => {
   button.type = 'button';
   button.className = 'house-button';
   button.setAttribute('aria-label',`Дом ${index+1}: ${house.name}, ${house.address}. Открыть описание и панораму`);
-  button.innerHTML = `<span class="number">${index+1}</span><span class="house-copy"><span class="house-name"></span><span class="house-address"></span></span><span class="house-arrow" aria-hidden="true">↗</span>`;
+  button.innerHTML = `<span class="number"><span class="house-digit">${index+1}</span></span><span class="house-copy"><span class="house-name"></span><span class="house-address"></span></span><span class="house-arrow" aria-hidden="true">↗</span>`;
   button.querySelector('.house-name').textContent = house.name;
   button.querySelector('.house-address').textContent = house.address;
   button.addEventListener('click',() => selectHouse(index));
@@ -183,6 +184,7 @@ allTab.addEventListener('click',() => setFavoriteView(false));
 favoritesTab.addEventListener('click',() => setFavoriteView(true));
 dialogFavorite.addEventListener('click',() => { if (currentHouse >= 0) toggleFavorite(currentHouse); });
 document.addEventListener('keydown',event => {
+  if (document.body.classList.contains('locked')) return;
   if (event.key === '/' && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName) && !dialog.open) {
     event.preventDefault();
     setSidebarOpen(true);
@@ -203,8 +205,18 @@ try {
   tiles.on('tileload',() => { failedTiles = 0; mapMessage.hidden = true; });
   map.on('moveend zoomend',updateMapLink);
   houses.forEach((house,index) => {
-    const icon = L.divIcon({className:'house-icon',html:`<span class="map-pin">${index+1}</span>`,iconSize:[34,34],iconAnchor:[17,17]});
-    const marker = L.marker(house.coords,{icon,title:`${house.name} — ${house.address}`}).addTo(map);
+    const icon = L.divIcon({className:'house-icon',html:`<span class="map-pin"><span class="house-digit">${index+1}</span></span>`,iconSize:[34,34],iconAnchor:[17,17]});
+    const marker = L.marker(house.coords,{icon,alt:`${house.name} — ${house.address}`,riseOnHover:true}).addTo(map);
+    const labelMarker = () => marker.getElement().setAttribute('aria-label',`${house.name} — ${house.address}`);
+    labelMarker();
+    marker.on('add',labelMarker);
+    const preview = document.createElement('div');
+    const name = document.createElement('strong');
+    name.textContent = house.name;
+    const address = document.createElement('span');
+    address.textContent = house.address;
+    preview.append(name,address);
+    marker.bindTooltip(preview,{direction:'top',offset:[0,-19],className:'house-preview'});
     marker.on('click',() => selectHouse(index));
     markers[index] = marker;
   });
@@ -250,6 +262,61 @@ function setSidebarOpen(open) {
 }
 detailsToggle.addEventListener('click',() => setSidebarOpen(true));
 sidebarClose.addEventListener('click',() => setSidebarOpen(false));
+
+const loginForm = document.getElementById('login-form');
+const loginName = document.getElementById('login-name');
+const passwordInput = document.getElementById('login-password');
+const loginError = document.getElementById('login-error');
+const sessionKey = 'vologda-demo-login';
+
+async function setGuideVisible(visible, animate = false) {
+  const screen = loginForm.closest('.login-screen');
+  const fade = animate && !window.matchMedia('(prefers-reduced-motion: reduce)').matches && screen.animate;
+  try {
+    if (fade) {
+      document.body.classList.add('switching-screen');
+      document.body.inert = true;
+    }
+    if (visible) {
+      document.body.classList.remove('locked');
+      map?.invalidateSize();
+    }
+    if (fade) {
+      await screen.animate([{opacity:1},{opacity:0}], {
+        duration:600, easing:'ease-in-out', direction:visible ? 'normal' : 'reverse'
+      }).finished;
+    }
+  } finally {
+    document.body.classList.toggle('locked',!visible);
+    document.body.classList.remove('switching-screen');
+    document.body.inert = false;
+    (visible ? detailsToggle : loginName).focus();
+  }
+}
+
+try {
+  if (sessionStorage.getItem(sessionKey) === 'admin') setGuideVisible(true);
+} catch {}
+
+loginForm.addEventListener('submit',event => {
+  event.preventDefault();
+  if (loginName.value !== 'admin' || passwordInput.value !== '12345') {
+    loginError.textContent = 'Неверный логин или пароль.';
+    passwordInput.focus();
+    passwordInput.select();
+    return;
+  }
+  try { sessionStorage.setItem(sessionKey,'admin'); } catch {}
+  loginError.textContent = '';
+  setGuideVisible(true,true).then(() => loginForm.reset());
+});
+loginForm.addEventListener('input',() => { loginError.textContent = ''; });
+document.getElementById('logout').addEventListener('click',() => {
+  try { sessionStorage.removeItem(sessionKey); } catch {}
+  if (openTimer !== null) window.clearTimeout(openTimer);
+  setSidebarOpen(false);
+  setGuideVisible(false,true);
+});
 document.addEventListener('keydown',event => {
   if (event.key === 'Escape' && sidebar.classList.contains('is-open') && !dialog.open) setSidebarOpen(false);
 });

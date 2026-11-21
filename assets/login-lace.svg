@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" fill="none">
+  <defs>
+    <g id="leaf" stroke-linejoin="round">
+      <path d="M80 69C60 57 60 38 80 17C100 38 100 57 80 69Z" stroke-width="3"/>
+      <path d="M80 63C66 52 66 39 80 23C94 39 94 52 80 63ZM80 23V63M70 38L86 53M90 38L74 53M68 44L83 59M92 44L77 59" stroke-width="1"/>
+      <path d="M80 17C69 10 77 4 80 13C83 4 91 10 80 17Z" stroke-width="1.5"/>
+    </g>
+  </defs>
+  <g stroke="#fffaf5">
+    <use href="#leaf" transform="rotate(0 80 80)"/>
+    <use href="#leaf" transform="rotate(45 80 80)"/>
+    <use href="#leaf" transform="rotate(90 80 80)"/>
+    <use href="#leaf" transform="rotate(135 80 80)"/>
+    <use href="#leaf" transform="rotate(180 80 80)"/>
+    <use href="#leaf" transform="rotate(225 80 80)"/>
+    <use href="#leaf" transform="rotate(270 80 80)"/>
+    <use href="#leaf" transform="rotate(315 80 80)"/>
+    <circle cx="80" cy="80" r="10" stroke-width="2"/>
+    <circle cx="80" cy="80" r="6" stroke-dasharray="2 2"/>
+  </g>
+</svg>
