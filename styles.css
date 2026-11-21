@@ -1,5 +1,6 @@
 :root{--red:#b43f50;--red-dark:#842c3d;--ink:#392b31;--muted:#806e73;--line:#ead9dd;--glass:#fffaf9db;--shadow:0 22px 70px #512b3630,0 2px 12px #512b3610}
 *{box-sizing:border-box}
+.leaflet-control-attribution .leaflet-attribution-flag { display:none; }
 .login-screen, .locked > :is(.site-header,.content) { display:none; }
 :is(.locked,.switching-screen) .login-screen {
   position:fixed; inset:0; z-index:1200;
