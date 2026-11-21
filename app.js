@@ -200,6 +200,7 @@ try {
     maxBounds:[[59.13,39.74],[59.30,40.03]],
     maxBoundsViscosity:1
   }).setView(center,cityZoom);
+  map.attributionControl.setPrefix('<a href="https://leafletjs.com/">Leaflet</a>');
   L.control.zoom({position:'topleft'}).addTo(map);
   const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{
     maxZoom:19,
