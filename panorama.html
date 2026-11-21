@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Уличная панорама</title>
+  <style>
+    html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f3e9ea;font:13px system-ui,sans-serif}
+    body>iframe{width:100vw!important;height:100vh!important;display:block;border:0}
+    #message{position:absolute;inset:0;display:grid;place-items:center;padding:25px;text-align:center;color:#842c3d}
+    #message[hidden]{display:none}
+  </style>
+</head>
+<body>
+  <div id="message">Загружаем уличную панораму…</div>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const lat = Number(params.get('lat'));
+    const lon = Number(params.get('lon'));
+    const message = document.getElementById('message');
+    if (!Number.isFinite(lat) || !Number.isFinite(lon) || lat < -90 || lat > 90 || lon < -180 || lon > 180) {
+      message.textContent = 'Координаты панорамы указаны неверно.';
+    } else {
+      let resizeTimer;
+      let activeScript;
+      let observer;
+      let timeout;
+      let lastSize = '';
+      function loadPanorama() {
+        const size = `${Math.max(320,innerWidth)},${Math.max(220,innerHeight)}`;
+        if (size === lastSize) return;
+        lastSize = size;
+        observer?.disconnect();
+        clearTimeout(timeout);
+        activeScript?.remove();
+        document.querySelectorAll('body > iframe').forEach(frame => frame.remove());
+        message.hidden = false;
+        message.textContent = 'Загружаем уличную панораму…';
+        const script = document.createElement('script');
+        activeScript = script;
+        const point = `${lon},${lat}`;
+        script.src = `https://panoramas.api-maps.yandex.ru/embed/1.x/?lang=ru&ll=${encodeURIComponent(point)}&size=${encodeURIComponent(size)}&l=stv`;
+        script.onerror = () => { if (activeScript === script) message.textContent = 'Панорама не загрузилась. Откройте её в Яндекс Картах по ссылке под окном.'; };
+        observer = new MutationObserver(() => {
+          if (document.querySelector('body > iframe')) { message.hidden = true; observer.disconnect(); clearTimeout(timeout); }
+        });
+        observer.observe(document.body,{childList:true});
+        document.body.appendChild(script);
+        timeout = setTimeout(() => {
+          if (!document.querySelector('body > iframe')) message.textContent = 'Панорама недоступна для этой точки. Попробуйте ссылку под окном.';
+          observer.disconnect();
+        },12000);
+      }
+      loadPanorama();
+      addEventListener('resize',() => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(loadPanorama,300);
+      });
+    }
+  </script>
+</body>
+</html>
