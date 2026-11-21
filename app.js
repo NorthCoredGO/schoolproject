@@ -195,7 +195,11 @@ document.addEventListener('keydown',event => {
 
 try {
   if (!window.L) throw new Error('Leaflet не загрузился');
-  map = L.map('map',{zoomControl:false,minZoom:cityZoom}).setView(center,cityZoom);
+  map = L.map('map',{
+    zoomControl:false,
+    maxBounds:[[59.13,39.74],[59.30,40.03]],
+    maxBoundsViscosity:1
+  }).setView(center,cityZoom);
   L.control.zoom({position:'topleft'}).addTo(map);
   const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{
     maxZoom:19,
