@@ -3,33 +3,33 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f8eeee">
+  <meta name="theme-color" content="#292126">
   <meta name="description" content="Интерактивная карта деревянных домов Вологды с историями и уличными панорамами.">
   <title>Деревянная Вологда — карта домов</title>
   <link rel="stylesheet" href="assets/leaflet.css">
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="motion.css">
   <script src="assets/leaflet.js" defer></script>
-  <script src="app.js?v=text-attribution" defer></script>
+  <script src="app.js?v=public-atlas" defer></script>
 </head>
 <body class="locked">
   <section class="login-screen" aria-labelledby="login-title">
     <form class="login-card" id="login-form">
       <div class="brand"><span class="brand-symbol" aria-hidden="true">В</span>Деревянная Вологда</div>
-      <h1 id="login-title">Вход в путеводитель</h1>
-      <label>Логин<span class="login-field"><input id="login-name" autocomplete="username" required autocapitalize="none" spellcheck="false"></span></label>
-      <label>Пароль<span class="login-field"><input id="login-password" type="password" autocomplete="current-password" required></span></label>
-      <p id="login-error" role="alert"></p>
-      <button type="submit">Войти</button>
+      <h1 id="login-title">Город, который помнит</h1>
+      <p class="login-lead">Откройте деревянную Вологду: 16 домов, истории за фасадами и прогулка по карте.</p>
+      <button type="submit">Начать прогулку <span aria-hidden="true">↗</span></button>
     </form>
   </section>
   <header class="site-header">
     <div class="brand"><span class="brand-symbol" aria-hidden="true">В</span><span>Деревянная Вологда</span></div>
     <div class="header-note"><span class="header-dot"></span> Интерактивный путеводитель по городу</div>
-    <button type="button" id="logout">Выйти</button>
+    <button type="button" id="logout">На главную</button>
   </header>
 
   <main class="content">
     <aside class="sidebar" id="sidebar" aria-hidden="true" inert>
+      <div class="sidebar-progress" aria-hidden="true"></div>
       <button class="sidebar-close" id="sidebar-close" type="button" aria-label="Закрыть панель">×</button>
       <div class="sidebar-top">
         <p class="eyebrow"><span class="eyebrow-line"></span> Атлас деревянной архитектуры <span class="edition">01 / Вологда</span></p>

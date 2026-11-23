@@ -1,0 +1,447 @@
+/* Motion-led visual language for the Vologda atlas. */
+:root {
+  --red: #d05a47;
+  --red-dark: #672e33;
+  --ink: #30262a;
+  --muted: #74666a;
+  --line: #e8dcd5;
+  --glass: #fffaf2f2;
+  --shadow: 0 24px 70px #21171a32, 0 3px 12px #21171a13;
+  --ease-out: cubic-bezier(.16, 1, .3, 1);
+}
+
+body { background: #292126; }
+
+/* The title treatment is intentionally made from CSS so the page stays light. */
+:is(.locked, .switching-screen) .login-screen {
+  isolation: isolate;
+  animation: none;
+  background:
+    radial-gradient(circle at 75% 20%, #a5504a75 0, transparent 34%),
+    radial-gradient(circle at 12% 85%, #78484680 0, transparent 32%),
+    linear-gradient(125deg, #211c22, #4c3036 55%, #292126);
+}
+.login-screen::before {
+  content: "ВОЛОГДА";
+  position: absolute;
+  z-index: -1;
+  left: -2vw;
+  top: 13%;
+  color: #fff9ee0b;
+  font: 800 clamp(105px, 21vw, 350px)/.8 Georgia, serif;
+  letter-spacing: -.09em;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.login-screen::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  width: min(68vw, 830px);
+  aspect-ratio: 1;
+  right: -17%;
+  top: 7%;
+  border: 1px solid #ffdfb942;
+  border-radius: 50%;
+  box-shadow: 0 0 0 70px #ffdfb90b, 0 0 0 150px #ffdfb908, inset 0 0 90px #e17b5022;
+  pointer-events: none;
+}
+.login-card {
+  width: min(100%, 440px);
+  gap: 17px;
+  padding: clamp(28px, 5vw, 46px);
+  border: 1px solid #fff8e7;
+  border-radius: 4px 38px 4px 38px;
+  background: #fffaf1;
+  box-shadow: 28px 28px 0 #d76e5133, 0 35px 100px #0d080a80;
+}
+.login-card::before {
+  top: auto;
+  bottom: -70px;
+  right: -58px;
+  width: 220px;
+  height: 220px;
+  background: #d7745550;
+}
+.login-card::after {
+  content: "01 / ИСТОРИИ ГОРОДА";
+  display: block;
+  margin-top: 4px;
+  padding-top: 18px;
+  border-top: 1px solid #e8d6ca;
+  color: #927b76;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .18em;
+}
+.login-card .brand { margin-bottom: 12px; color: #6d3a3a; }
+.brand-symbol {
+  border-radius: 50%;
+  background: #d05a47;
+  box-shadow: 0 0 0 5px #d05a4724;
+  font-style: italic;
+}
+.login-card h1 {
+  max-width: 340px;
+  margin: 0 0 10px;
+  color: #3d2d30;
+  font: 500 clamp(40px, 5vw, 56px)/.98 Georgia, serif;
+  letter-spacing: -.065em;
+}
+.login-lead {
+  max-width: 320px;
+  margin: 0 0 10px;
+  color: #705e60;
+  font-size: 15px;
+  line-height: 1.6;
+}
+.login-card button span { display: inline-block; margin-left: 12px; transition: transform .4s var(--ease-out); }
+.login-card button:hover span { transform: translate(4px, -4px); }
+.login-card label { color: #705e60; font-size: 11px; letter-spacing: .09em; text-transform: uppercase; }
+.login-card input {
+  min-height: 48px;
+  padding: 12px 14px;
+  border-color: #ddcec4;
+  border-radius: 4px;
+  background: #fffefa;
+  font-size: 15px;
+  letter-spacing: normal;
+}
+.login-card button {
+  min-height: 50px;
+  margin-top: 7px;
+  border-radius: 4px;
+  background: #d05a47;
+  color: #fff9ed;
+  letter-spacing: .05em;
+}
+.login-card button:is(:hover, :focus-visible) { background: #ae4336; box-shadow: 0 10px 28px #ae433644; }
+
+.map-region { background: #d9d2c6; }
+.map { filter: saturate(.62) sepia(.14) contrast(.98); }
+.map-region::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 400;
+  pointer-events: none;
+  background: linear-gradient(90deg, #3b2a2b16, transparent 23%, transparent 74%, #3b2a2b15);
+}
+.site-header {
+  top: 16px;
+  left: 16px;
+  right: 16px;
+  height: 68px;
+  border: 1px solid #ffffff21;
+  border-radius: 8px 24px 8px 24px;
+  background: #34292ff2;
+  box-shadow: 0 15px 36px #24191c35;
+  color: #fff9ef;
+}
+.site-header::after { display: none; }
+.site-header .brand-symbol { width: 40px; height: 40px; font-size: 25px; }
+.header-note { color: #d6b8ad; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; }
+.header-dot, .map-title-dot { background: #e8a36c; box-shadow: 0 0 0 4px #e8a36c26; }
+#logout { border: 1px solid #fff9ef38; border-radius: 999px; background: transparent; color: #fff9ef; }
+#logout:hover { background: #fff9ef20; }
+
+.sidebar {
+  top: 100px;
+  bottom: 16px;
+  left: 16px;
+  width: min(460px, calc(100vw - 32px));
+  border: 1px solid #fffaf2;
+  border-radius: 8px 34px 8px 34px;
+  background: #fffaf2f5;
+  box-shadow: 18px 20px 0 #36262a1c, var(--shadow);
+  transform: translateX(calc(-100% - 52px)) rotate(-2deg);
+  transform-origin: left top;
+  transition: transform .68s var(--ease-out), opacity .4s, visibility .4s;
+}
+.sidebar.is-open { transform: translateX(0) rotate(0); }
+.sidebar-top { padding: 38px 30px 22px; }
+.sidebar-close, .dialog-close { border-radius: 50%; background: #f0e2d5; color: #5c3435; }
+.eyebrow { color: #bd5848; font-size: 10px; letter-spacing: .16em; }
+.edition { color: #a3948b; }
+.sidebar h1 { max-width: 400px; color: #30262a; font-size: clamp(47px, 4.2vw, 63px); }
+.sidebar h1 em { color: #d05a47; }
+.intro { margin-top: 20px; font-size: 13px; }
+.hero-stats { gap: 14px; padding: 18px 0; }
+.hero-stats > div { display: grid; gap: 2px; }
+.hero-stats strong { color: #3a2b2f; font: 500 35px/.95 Georgia, serif; }
+.hero-stats span { font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.controls-caption, .list-heading { color: #ae4f40; }
+.search-wrap, .filter-row select { border-radius: 5px; background: #fffefa; }
+.view-tabs { border-radius: 6px; background: #eee5dc; }
+.view-tab { border-radius: 4px; }
+.view-tab.active { background: #fffefa; }
+.list-heading { padding-left: 30px; padding-right: 30px; }
+.house-list { gap: 9px; padding-left: 20px; padding-right: 20px; }
+.house-button {
+  border-radius: 5px 17px 5px 17px;
+  background: #fffefa;
+  transition: transform .3s var(--ease-out), background-color .3s, border-color .3s, box-shadow .3s;
+}
+.house-button:hover, .house-button:focus-visible, .house-button.active {
+  border-color: #d9a494;
+  background: #fff4eb;
+  transform: translateX(5px);
+}
+.house-button.active { box-shadow: inset 4px 0 #d05a47, 0 10px 22px #843b481c; }
+.house-name { font-size: 14px; }
+.number { flex: none; }
+.sidebar-footer { padding-left: 30px; padding-right: 30px; }
+
+.details-toggle, .map-title, .map-legend, .map-actions button, .map-actions a {
+  border: 1px solid #fffaf28c;
+  background: #fffaf2ef;
+  color: #4c3538;
+  box-shadow: 0 12px 30px #3323272d;
+}
+.details-toggle { top: 105px; left: 20px; border-radius: 6px 22px 6px 22px; }
+.toggle-icon { border-radius: 50%; background: #d05a47; color: #fff8ec; }
+.toggle-arrow { color: #d05a47; }
+.map-title { top: 105px; right: 20px; border-radius: 999px; }
+.map-legend { bottom: 85px; left: 20px; border-radius: 5px 16px 5px 16px; }
+.legend-mark { background: #e9d7c7; color: #bd5848; }
+.map-actions { right: 20px; bottom: 20px; }
+.map-actions button, .map-actions a { border-radius: 5px 15px 5px 15px; }
+.map-actions button:first-child { border-color: #3a2b2f; background: #3a2b2f; color: #fff9ef; }
+.map-actions button:first-child:hover { background: #5a3b3f; }
+.leaflet-control-zoom { margin-top: 185px !important; margin-left: 20px !important; }
+.leaflet-control-zoom a { background: #fffaf2 !important; color: #a7463c !important; }
+.map-pin, .number {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  font: 700 13px/1 ui-sans-serif, system-ui, sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+.map-pin {
+  border: 2px solid #fffaf2;
+  background: #392b30;
+  color: #fffaf2;
+  box-shadow: 0 0 0 1px #392b3040, 0 5px 13px #27191d66;
+}
+.number {
+  border: 1px solid #e0cfc1;
+  background: #f1e5da;
+  color: #793f39;
+  box-shadow: none;
+}
+.map-pin::before, .number::before { display: none; }
+.map-pin.selected, .house-button.active .number {
+  border-color: #fffaf2;
+  background: #d05a47;
+  color: #fffaf2;
+  box-shadow: 0 0 0 4px #d05a4740, 0 6px 16px #692e2f70;
+}
+.house-button.active .number { box-shadow: 0 0 0 3px #d05a4725; }
+.map-pin.selected::after { border-radius: 50%; }
+.house-digit { animation: none !important; }
+.detail-dialog { border-radius: 5px 30px 5px 30px; background: #fffaf2; }
+.detail-dialog::backdrop { background: #241b20b8; }
+.dialog-title { color: #34292f; }
+.dialog-favorite { border-radius: 4px; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .login-screen::before { animation: title-drift 22s ease-in-out infinite alternate; }
+  .login-screen::after { animation: orbit-breathe 14s ease-in-out infinite alternate; }
+  .login-card { animation: card-enter .9s var(--ease-out) both; }
+  .login-card > :not(.brand) { animation: content-enter .7s var(--ease-out) both; }
+  .login-card h1 { animation-delay: .12s; }
+  .login-lead { animation-delay: .2s; }
+  .login-card label:nth-of-type(1) { animation-delay: .2s; }
+  .login-card label:nth-of-type(2) { animation-delay: .28s; }
+  .login-card button { animation-delay: .36s; }
+  .site-header { animation: header-enter .7s var(--ease-out) both; }
+  .details-toggle { animation: content-enter .7s .2s var(--ease-out) both; }
+  .map-title { animation: content-enter .7s .3s var(--ease-out) both; }
+  .map-legend { animation: content-enter .7s .45s var(--ease-out) both; }
+  .map-actions { animation: content-enter .7s .5s var(--ease-out) both; }
+  .sidebar.is-open .eyebrow,
+  .sidebar.is-open h1,
+  .sidebar.is-open .intro,
+  .sidebar.is-open .hero-stats,
+  .sidebar.is-open .controls-caption,
+  .sidebar.is-open .search-wrap,
+  .sidebar.is-open .filter-row,
+  .sidebar.is-open .view-tabs,
+  .sidebar.is-open .list-heading { animation: content-enter .65s var(--ease-out) both; }
+  .sidebar.is-open h1 { animation-delay: .08s; }
+  .sidebar.is-open .intro { animation-delay: .13s; }
+  .sidebar.is-open .hero-stats { animation-delay: .18s; }
+  .sidebar.is-open .controls-caption { animation-delay: .22s; }
+  .sidebar.is-open .search-wrap { animation-delay: .26s; }
+  .sidebar.is-open .filter-row { animation-delay: .3s; }
+  .sidebar.is-open .view-tabs { animation-delay: .34s; }
+  .sidebar.is-open .list-heading { animation-delay: .38s; }
+  .sidebar.is-open .house-row:not([hidden]) { animation: row-enter .55s var(--ease-out) both; animation-delay: var(--row-delay); }
+  .house-icon .map-pin { animation: pin-enter .55s var(--ease-out) both; }
+  .map-pin.selected::after { animation-duration: .9s; }
+  .map-title-dot { animation: dot-pulse 2.8s ease-in-out infinite; }
+  .detail-dialog[open] { animation: dialog-enter .48s var(--ease-out) both; }
+  .detail-dialog[open]::backdrop { animation: backdrop-enter .35s ease-out both; }
+  .dialog-head, .dialog-content { animation: content-enter .55s .1s var(--ease-out) both; }
+  @keyframes title-drift { to { transform: translateX(-5vw); } }
+  @keyframes orbit-breathe { to { transform: scale(1.09) rotate(10deg); opacity: .65; } }
+  @keyframes card-enter { from { opacity: 0; transform: translateY(32px) rotate(-2deg) scale(.96); } to { opacity: 1; transform: none; } }
+  @keyframes content-enter { from { opacity: 0; transform: translateY(17px); } to { opacity: 1; transform: none; } }
+  @keyframes header-enter { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: none; } }
+  @keyframes row-enter { from { opacity: 0; transform: translateX(-17px); } to { opacity: 1; transform: none; } }
+  @keyframes pin-enter { from { opacity: 0; transform: translateY(-15px) scale(.55); } to { opacity: 1; transform: none; } }
+  @keyframes dot-pulse { 50% { box-shadow: 0 0 0 8px #e8a36c0b; } }
+  @keyframes dialog-enter { from { opacity: 0; transform: translateY(25px) scale(.96); } to { opacity: 1; transform: none; } }
+  @keyframes backdrop-enter { from { opacity: 0; } to { opacity: 1; } }
+}
+
+@media (max-width: 600px) {
+  .login-screen::before { top: 19%; font-size: 28vw; }
+  .login-screen::after { width: 100vw; right: -60%; top: 3%; }
+  .login-card { box-shadow: 12px 12px 0 #d76e5133, 0 25px 70px #0d080a70; }
+  .site-header { top: 10px; left: 10px; right: 10px; height: 60px; }
+  .sidebar { top: 82px; bottom: 10px; left: 10px; width: calc(100vw - 20px); }
+  .sidebar-top { padding: 30px 21px 17px; }
+  .sidebar h1 { font-size: clamp(42px, 11vw, 58px); }
+  .list-heading, .sidebar-footer { padding-left: 21px; padding-right: 21px; }
+  .house-list { padding-left: 12px; padding-right: 12px; }
+  .details-toggle { top: 84px; left: 12px; }
+  .map-title { top: 84px; right: 12px; }
+  .map-actions { right: 12px; bottom: 15px; }
+  .leaflet-control-zoom { margin-top: 160px !important; margin-left: 12px !important; }
+}
+@media (max-width: 390px) {
+  .map-title { top: 145px; }
+  .leaflet-control-zoom { margin-top: 210px !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .login-screen::before, .login-screen::after, .login-card, .login-card > *,
+  .site-header, .details-toggle, .map-title, .map-legend, .map-actions,
+  .sidebar.is-open *, .house-icon .map-pin, .detail-dialog[open],
+  .detail-dialog[open]::backdrop, .dialog-head, .dialog-content { animation: none !important; }
+  .sidebar { transform: translateX(calc(-100% - 52px)); }
+}
+
+/* Small, deliberate reactions make the atlas feel responsive. */
+:is(.locked, .switching-screen) .login-screen {
+  background:
+    radial-gradient(520px circle at var(--pointer-x, 50%) var(--pointer-y, 50%), #e79a6940, transparent 70%),
+    radial-gradient(circle at 75% 20%, #a5504a75 0, transparent 34%),
+    radial-gradient(circle at 12% 85%, #78484680 0, transparent 32%),
+    linear-gradient(125deg, #211c22, #4c3036 55%, #292126);
+}
+.login-card { transition: box-shadow .5s var(--ease-out), border-color .5s; }
+.login-card:focus-within { border-color: #e7aa7c; box-shadow: 28px 28px 0 #d76e5133, 0 40px 110px #0d080a98; }
+.login-card button { position: relative; overflow: hidden; }
+.login-card button::after,
+.map-actions button::after,
+.map-actions a::after {
+  content: "";
+  position: absolute;
+  inset: -60% auto -60% -30%;
+  width: 18%;
+  transform: translateX(-180%) rotate(22deg);
+  background: linear-gradient(90deg, transparent, #fff9ef55, transparent);
+  pointer-events: none;
+}
+.login-card button:hover::after,
+.map-actions button:hover::after,
+.map-actions a:hover::after { transform: translateX(800%) rotate(22deg); }
+.sidebar-progress {
+  position: sticky;
+  z-index: 6;
+  top: 0;
+  display: block;
+  height: 3px;
+  margin-bottom: -3px;
+  background: #d05a47;
+  transform: scaleX(var(--scroll-progress, 0));
+  transform-origin: left;
+  pointer-events: none;
+}
+.sidebar h1 em { position: relative; width: fit-content; }
+.sidebar h1 em::after {
+  content: "";
+  position: absolute;
+  height: 5px;
+  left: 2px;
+  right: 0;
+  bottom: -7px;
+  background: #d05a47;
+  border-radius: 100%;
+  transform: scaleX(.2) rotate(-1deg);
+  transform-origin: left;
+  opacity: .7;
+}
+.search-wrap { position: relative; overflow: hidden; }
+.search-wrap::after {
+  content: "";
+  position: absolute;
+  right: 100%;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  background: #d05a47;
+  transition: right .45s var(--ease-out);
+  pointer-events: none;
+}
+.search-wrap:focus-within::after { right: 0; }
+.search-wrap svg { transition: transform .4s var(--ease-out), stroke .3s; }
+.search-wrap:focus-within svg { transform: rotate(-12deg) scale(1.12); stroke: #d05a47; }
+.filter-row select { transition: border-color .25s, box-shadow .25s, transform .35s var(--ease-out); }
+.filter-row select:hover { border-color: #d2a69a; }
+.filter-row select:focus-visible { box-shadow: 0 0 0 4px #d05a4720; }
+.view-tab { transition: transform .35s var(--ease-out), background-color .3s, box-shadow .3s, color .3s; }
+.view-tab:hover:not(.active) { transform: translateY(-2px); color: #793f39; }
+.view-tab.active { box-shadow: 0 5px 14px #6e423020; }
+.house-button { position: relative; overflow: hidden; isolation: isolate; }
+.house-button::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: linear-gradient(100deg, transparent 35%, #fff 58%, transparent 76%);
+  transform: translateX(-110%);
+  pointer-events: none;
+}
+.house-button:is(:hover, :focus-visible)::after { transform: translateX(110%); }
+.house-button .number { transition: transform .4s var(--ease-out), color .3s, background-color .3s, box-shadow .3s; }
+.house-button:is(:hover, :focus-visible) .number { transform: rotate(-10deg) scale(1.08); }
+.house-copy { transition: transform .4s var(--ease-out); }
+.house-button:is(:hover, :focus-visible) .house-copy { transform: translateX(3px); }
+.favorite-button { transition: transform .35s var(--ease-out), color .25s, background-color .25s; }
+.favorite-button:hover { transform: translateY(-50%) rotate(-12deg) scale(1.12); }
+.favorite-button[aria-pressed="true"] { color: #d05a47; }
+.details-toggle { overflow: hidden; }
+.details-toggle .toggle-icon { transition: transform .5s var(--ease-out), background-color .3s; }
+.details-toggle .toggle-arrow { transition: transform .5s var(--ease-out); }
+.details-toggle:hover .toggle-icon { transform: rotate(45deg); }
+.details-toggle:hover .toggle-arrow { transform: translate(3px, -3px); }
+.map-actions button, .map-actions a { position: relative; overflow: hidden; }
+.map-pin { transition: transform .38s var(--ease-out), background-color .3s, box-shadow .3s, color .3s; }
+.house-icon:is(:hover, :focus-visible) .map-pin { transform: translateY(-4px) scale(1.13); box-shadow: 0 0 0 5px #d05a4730, 0 10px 20px #27191d70; }
+.map-pin.selected { transform: scale(1.12); }
+.dialog-close { transition: transform .4s var(--ease-out), background-color .3s; }
+.dialog-close:hover { transform: rotate(90deg); }
+.dialog-links a { display: inline-block; text-decoration-thickness: 1px; text-underline-offset: 4px; transition: color .25s, transform .35s var(--ease-out); }
+.dialog-links a:hover { color: #d05a47; transform: translateX(3px); }
+
+@media (prefers-reduced-motion: no-preference) {
+  .login-card button::after, .map-actions button::after, .map-actions a::after { transition: transform .8s var(--ease-out); }
+  .login-card > :not(.brand), .details-toggle { animation-fill-mode: backwards; }
+  .sidebar h1 em::after { transition: transform .8s .3s var(--ease-out); }
+  .sidebar.is-open h1 em::after { transform: scaleX(1) rotate(-1deg); }
+  .house-button::after { transition: transform .85s var(--ease-out); }
+  .house-icon .map-pin { animation-delay: var(--pin-delay, 0ms); animation-fill-mode: backwards; }
+  .detail-dialog[open] .panorama { animation: panorama-enter .7s .12s var(--ease-out) both; }
+  .detail-dialog[open] .dialog-links { animation: content-enter .6s .25s var(--ease-out) both; }
+  @keyframes panorama-enter { from { opacity: .2; clip-path: inset(0 0 100% 0); } to { opacity: 1; clip-path: inset(0); } }
+}
+@media (prefers-reduced-motion: reduce) {
+  .login-card button::after, .map-actions button::after, .map-actions a::after, .house-button::after { display: none; }
+  .sidebar h1 em::after { transform: scaleX(1) rotate(-1deg); }
+  .house-icon:is(:hover, :focus-visible) .map-pin { transform: none; }
+  .map-pin.selected { transform: none; }
+}

@@ -28,6 +28,11 @@ const openMapLink = document.getElementById('open-map');
 const dialog = document.getElementById('house-dialog');
 const panorama = document.getElementById('panorama');
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function animateFeedback(element, frames, duration = 360) {
+  if (!reduceMotion && element?.animate) {
+    element.animate(frames,{duration,easing:'cubic-bezier(.16,1,.3,1)'});
+  }
+}
 const buttons = [];
 const rows = [];
 const favoriteButtons = [];
@@ -60,6 +65,7 @@ streets.forEach(street => {
 });
 
 function applyFilters() {
+  const previousCount = Number(count.textContent);
   if (openTimer !== null) window.clearTimeout(openTimer);
   openTimer = null;
   if (map) map.stop();
@@ -79,6 +85,10 @@ function applyFilters() {
   count.textContent = String(visibleCount);
   const word = visibleCount % 10 === 1 && visibleCount % 100 !== 11 ? 'дом' : visibleCount % 10 >= 2 && visibleCount % 10 <= 4 && (visibleCount % 100 < 12 || visibleCount % 100 > 14) ? 'дома' : 'домов';
   mapCount.textContent = `${visibleCount} ${word} на карте`;
+  if (visibleCount !== previousCount) {
+    animateFeedback(count,[{opacity:.3,transform:'translateY(7px)'},{opacity:1,transform:'translateY(0)'}]);
+    animateFeedback(mapCount,[{opacity:.4,transform:'translateY(6px)'},{opacity:1,transform:'translateY(0)'}]);
+  }
   emptyState.textContent = favoritesOnly && favorites.size === 0 ? 'Здесь пока пусто. Нажмите ♡ рядом с домом, чтобы сохранить его.' : 'Ничего не найдено. Измените запрос или фильтры.';
   emptyState.hidden = visibleCount !== 0;
   list.classList.toggle('is-empty',visibleCount === 0);
@@ -103,6 +113,8 @@ function toggleFavorite(index) {
   if (favorites.has(index)) favorites.delete(index); else favorites.add(index);
   try { localStorage.setItem('vologda-favorites',JSON.stringify([...favorites])); } catch {}
   updateFavorites();
+  animateFeedback(favoriteButtons[index],[{transform:'translateY(-50%) scale(.8)'},{transform:'translateY(-50%) scale(1.25)'},{transform:'translateY(-50%) scale(1)'}],450);
+  if (currentHouse === index) animateFeedback(dialogFavorite,[{transform:'scale(.94)'},{transform:'scale(1.05)'},{transform:'scale(1)'}],450);
   if (favoritesOnly) applyFilters();
 }
 
@@ -159,6 +171,7 @@ function selectHouse(index) {
 houses.forEach((house,index) => {
   const row = document.createElement('div');
   row.className = 'house-row';
+  row.style.setProperty('--row-delay',`${Math.min(360 + index * 35,850)}ms`);
   const button = document.createElement('button');
   button.type = 'button';
   button.className = 'house-button';
@@ -211,7 +224,7 @@ try {
   tiles.on('tileload',() => { failedTiles = 0; mapMessage.hidden = true; });
   map.on('moveend zoomend',updateMapLink);
   houses.forEach((house,index) => {
-    const icon = L.divIcon({className:'house-icon',html:`<span class="map-pin"><span class="house-digit">${index+1}</span></span>`,iconSize:[34,34],iconAnchor:[17,17]});
+    const icon = L.divIcon({className:'house-icon',html:`<span class="map-pin" style="--pin-delay:${index*45}ms"><span class="house-digit">${index+1}</span></span>`,iconSize:[34,34],iconAnchor:[17,17]});
     const marker = L.marker(house.coords,{icon,alt:`${house.name} — ${house.address}`,riseOnHover:true}).addTo(map);
     const labelMarker = () => marker.getElement().setAttribute('aria-label',`${house.name} — ${house.address}`);
     labelMarker();
@@ -258,6 +271,15 @@ dialog.addEventListener('close',() => {
 const sidebar = document.getElementById('sidebar');
 const detailsToggle = document.getElementById('details-toggle');
 const sidebarClose = document.getElementById('sidebar-close');
+let scrollFrame = 0;
+sidebar.addEventListener('scroll',() => {
+  if (scrollFrame) return;
+  scrollFrame = requestAnimationFrame(() => {
+    const scrollable = sidebar.scrollHeight - sidebar.clientHeight;
+    sidebar.style.setProperty('--scroll-progress',String(scrollable > 0 ? sidebar.scrollTop / scrollable : 0));
+    scrollFrame = 0;
+  });
+},{passive:true});
 function setSidebarOpen(open) {
   sidebar.classList.toggle('is-open',open);
   sidebar.toggleAttribute('inert',!open);
@@ -270,10 +292,23 @@ detailsToggle.addEventListener('click',() => setSidebarOpen(true));
 sidebarClose.addEventListener('click',() => setSidebarOpen(false));
 
 const loginForm = document.getElementById('login-form');
-const loginName = document.getElementById('login-name');
-const passwordInput = document.getElementById('login-password');
-const loginError = document.getElementById('login-error');
-const sessionKey = 'vologda-demo-login';
+const loginScreen = loginForm.closest('.login-screen');
+if (!reduceMotion && window.matchMedia('(hover: hover)').matches) {
+  let pointerFrame = 0;
+  let pointerX = 50;
+  let pointerY = 50;
+  loginScreen.addEventListener('pointermove',event => {
+    pointerX = event.clientX / window.innerWidth * 100;
+    pointerY = event.clientY / window.innerHeight * 100;
+    if (pointerFrame) return;
+    pointerFrame = requestAnimationFrame(() => {
+      loginScreen.style.setProperty('--pointer-x',`${pointerX}%`);
+      loginScreen.style.setProperty('--pointer-y',`${pointerY}%`);
+      pointerFrame = 0;
+    });
+  },{passive:true});
+}
+const sessionKey = 'vologda-guide-open';
 
 async function setGuideVisible(visible, animate = false) {
   const screen = loginForm.closest('.login-screen');
@@ -288,35 +323,27 @@ async function setGuideVisible(visible, animate = false) {
       map?.invalidateSize();
     }
     if (fade) {
-      await screen.animate([{opacity:1},{opacity:0}], {
-        duration:600, easing:'ease-in-out', direction:visible ? 'normal' : 'reverse'
+      await screen.animate([{opacity:1,filter:'blur(0px)',transform:'translateY(0)'},{opacity:0,filter:'blur(8px)',transform:'translateY(-2%)'}], {
+        duration:750, easing:'cubic-bezier(.65,0,.25,1)', direction:visible ? 'normal' : 'reverse'
       }).finished;
     }
   } finally {
     document.body.classList.toggle('locked',!visible);
     document.body.classList.remove('switching-screen');
     document.body.inert = false;
-    (visible ? detailsToggle : loginName).focus();
+    (visible ? detailsToggle : loginForm.querySelector('button')).focus();
   }
 }
 
 try {
-  if (sessionStorage.getItem(sessionKey) === 'admin') setGuideVisible(true);
+  if (sessionStorage.getItem(sessionKey) === 'yes') setGuideVisible(true);
 } catch {}
 
 loginForm.addEventListener('submit',event => {
   event.preventDefault();
-  if (loginName.value !== 'admin' || passwordInput.value !== '12345') {
-    loginError.textContent = 'Неверный логин или пароль.';
-    passwordInput.focus();
-    passwordInput.select();
-    return;
-  }
-  try { sessionStorage.setItem(sessionKey,'admin'); } catch {}
-  loginError.textContent = '';
-  setGuideVisible(true,true).then(() => loginForm.reset());
+  try { sessionStorage.setItem(sessionKey,'yes'); } catch {}
+  setGuideVisible(true,true);
 });
-loginForm.addEventListener('input',() => { loginError.textContent = ''; });
 document.getElementById('logout').addEventListener('click',() => {
   try { sessionStorage.removeItem(sessionKey); } catch {}
   if (openTimer !== null) window.clearTimeout(openTimer);
